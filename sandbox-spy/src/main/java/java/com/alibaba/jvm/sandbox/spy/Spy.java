@@ -117,7 +117,10 @@ public class Spy {
     }
 
     private static final SelfCallBarrier selfCallBarrier = new SelfCallBarrier();
-
+    /**
+    * NOTE-LPK 2019/11/7 22:46 CALL事件系列是从GREYS中衍生过来的事件，它描述了一个方法内部，调用其他方法的过程。
+     * 方法内部调用其他方法之前执行
+    */
     public static void spyMethodOnCallBefore(final int lineNumber,
                                              final String owner,
                                              final String name,
@@ -133,7 +136,9 @@ public class Spy {
             handleException(cause);
         }
     }
-
+    /**
+    * NOTE-LPK 2019/11/7 22:47 方法内部调用其他方法返回之后执行
+    */
     public static void spyMethodOnCallReturn(final String namespace,
                                              final int listenerId) throws Throwable {
         try {
@@ -145,7 +150,9 @@ public class Spy {
             handleException(cause);
         }
     }
-
+    /**
+    * NOTE-LPK 2019/11/7 22:48 方法内部调用其他方法抛出异常之后
+    */
     public static void spyMethodOnCallThrows(final String throwException,
                                              final String namespace,
                                              final int listenerId) throws Throwable {
@@ -159,6 +166,9 @@ public class Spy {
         }
     }
 
+    /**
+    * NOTE-LPK 2019/11/7 22:49 方法被调用执行之后，记录方法行号
+    */
     public static void spyMethodOnLine(final int lineNumber,
                                        final String namespace,
                                        final int listenerId) throws Throwable {
@@ -172,6 +182,9 @@ public class Spy {
         }
     }
 
+    /**
+    * NOTE-LPK 2019/11/7 22:50 方法被调用之前执行
+    */
     public static Ret spyMethodOnBefore(final Object[] argumentArray,
                                         final String namespace,
                                         final int listenerId,
@@ -200,6 +213,9 @@ public class Spy {
         }
     }
 
+    /**
+    * NOTE-LPK 2019/11/7 22:51 方法返回之后执行
+    */
     public static Ret spyMethodOnReturn(final Object object,
                                         final String namespace,
                                         final int listenerId) throws Throwable {
@@ -222,6 +238,9 @@ public class Spy {
         }
     }
 
+    /**
+    * NOTE-LPK 2019/11/7 22:52 方法抛出异常之后执行
+    */
     public static Ret spyMethodOnThrows(final Throwable throwable,
                                         final String namespace,
                                         final int listenerId) throws Throwable {
@@ -289,6 +308,8 @@ public class Spy {
 
     /**
      * 本地线程
+     * NOTE-LPK  双向链表
+     * NOTE-LPK 链表每一个节点都是一个线程和一个锁，SelfCallBarrier 一共有512条这样的链表， 通过线程的哈希值确定所属的链表
      */
     public static class SelfCallBarrier {
 
@@ -323,7 +344,7 @@ public class Spy {
             node.pre = (node.next = null);
         }
 
-        // 插入节点
+        // NOTE-LPK 插入节点 头插法
         void insert(final Node top, final Node node) {
             if (null != top.next) {
                 top.next.pre = node;
@@ -362,7 +383,9 @@ public class Spy {
             Node node = top;
             try {
                 // spin for lock
-                while (!top.lock.tryLock()) ;
+                // NOTE-LPK: 2019/11/7 23:20 如果top 已经被别的线程拿到了锁就继续查询，直到获得锁
+                while (!top.lock.tryLock()) {
+                }
                 while (null != node.next) {
                     node = node.next;
                     if (thread == node.thread) {
@@ -379,7 +402,8 @@ public class Spy {
             final Node top = nodeArray[abs(thread.hashCode()) % THREAD_LOCAL_ARRAY_LENGTH];
             final Node node = new Node(thread);
             try {
-                while (!top.lock.tryLock()) ;
+                while (!top.lock.tryLock()) {
+                }
                 insert(top, node);
             } finally {
                 top.lock.unlock();
@@ -390,7 +414,8 @@ public class Spy {
         void exit(Thread thread, Node node) {
             final Node top = nodeArray[abs(thread.hashCode()) % THREAD_LOCAL_ARRAY_LENGTH];
             try {
-                while (!top.lock.tryLock()) ;
+                while (!top.lock.tryLock()) {
+                }
                 delete(node);
             } finally {
                 top.lock.unlock();
@@ -420,6 +445,12 @@ public class Spy {
                           final Method on_call_before_method,
                           final Method on_call_return_method,
                           final Method on_call_throws_method) {
+            /**
+            * NOTE-LPK 2019/11/7 23:40 assert [boolean 表达式]
+             *
+             * 如果[boolean表达式]为true，则程序继续执行。
+             * 如果为false，则程序抛出AssertionError，并终止执行。
+            */
             assert null != on_before_method;
             assert null != on_return_method;
             assert null != on_throws_method;
