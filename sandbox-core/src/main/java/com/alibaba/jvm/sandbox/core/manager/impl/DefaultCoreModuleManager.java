@@ -80,7 +80,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
     }
 
     /*
-     * 通知模块生命周期
+     * NOTE-LPK 通知模块生命周期
      */
     private void callAndFireModuleLifeCycle(final CoreModule coreModule, final ModuleLifeCycleType type) throws ModuleException {
         if (coreModule.getModule() instanceof ModuleLifecycle) {
@@ -168,18 +168,19 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
                 moduleJarFile
         );
 
-        // 初始化模块信息
+        // NOTE-LPK 初始化模块信息
         final CoreModule coreModule = new CoreModule(uniqueId, moduleJarFile, moduleClassLoader, module);
 
-        // 注入@Resource资源
+        // NOTE-LPK 注入@Resource资源
         injectResourceOnLoadIfNecessary(coreModule);
 
+        // NOTE-LPK: 2019/11/12 00:49 设置生命周期
         callAndFireModuleLifeCycle(coreModule, MODULE_LOAD);
 
         // 设置为已经加载
         coreModule.markLoaded(true);
 
-        // 如果模块标记了加载时自动激活，则需要在加载完成之后激活模块
+        // NOTE-LPK 如果模块标记了加载时自动激活，则需要在加载完成之后激活模块
         markActiveOnLoadIfNecessary(coreModule);
 
         // 注册到模块列表中
@@ -197,6 +198,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
                 final Class<?> fieldType = resourceField.getType();
 
                 // LoadedClassDataSource对象注入
+                // NOTE-LPK: 2019/11/12 00:47 自己@Resource 映入的资源就是有这里加载
                 if (LoadedClassDataSource.class.isAssignableFrom(fieldType)) {
                     writeField(
                             resourceField,
@@ -321,6 +323,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
         logger.info("active module when OnLoad, module={}", coreModule.getUniqueId());
         final Information info = coreModule.getModule().getClass().getAnnotation(Information.class);
         if (info.isActiveOnLoad()) {
+            // NOTE-LPK: 2019/11/12 00:54 进行激活模块，激活之后ControlModule，InfoModule，ModuleMgrModule 这三个系统模块提供了一些通过shell命令可以操作的方法
             active(coreModule);
         }
     }
@@ -559,7 +562,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
                     moduleClassLoader
             );
 
-            // 这里进行真正的模块加载
+            // NOTE-LPK 这里进行真正的模块加载
             load(uniqueId, module, moduleJarFile, moduleClassLoader);
         }
     }
@@ -581,7 +584,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
         // 1. 强制卸载所有模块
         unloadAll();
 
-        // 2. 加载所有模块
+        // 2. NOTE-LPK 加载所有模块
         for (final File moduleLibDir : moduleLibDirArray) {
             // 用户模块加载目录，加载用户模块目录下的所有模块
             // 对模块访问权限进行校验
@@ -704,7 +707,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
                 unload(coreModule, true);
             }
 
-            // 4. 加载add
+            // 4. NOTE-LPK 加载add  变动的模块
             for (final File jarFile : appendJarFiles) {
                 new ModuleLibLoader(jarFile, cfg.getLaunchMode())
                         .load(new InnerModuleJarLoadCallback(), new InnerModuleLoadCallback());
@@ -761,6 +764,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
                     && userModuleLibDir.canRead()) {
                 logger.info("force-flush modules: module-lib={}", userModuleLibDir);
                 new ModuleLibLoader(userModuleLibDir, cfg.getLaunchMode())
+                        // NOTE-LPK: 2019/11/12 01:14 加载用户模块
                         .load(new InnerModuleJarLoadCallback(), new InnerModuleLoadCallback());
             } else {
                 logger.warn("force-flush modules: module-lib can not access, will be ignored. module-lib={}", userModuleLibDir);

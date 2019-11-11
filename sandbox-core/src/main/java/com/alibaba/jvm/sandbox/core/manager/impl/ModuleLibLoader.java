@@ -13,8 +13,8 @@ import static org.apache.commons.io.FileUtils.listFiles;
 import static org.apache.commons.lang3.StringUtils.join;
 
 /**
- * 模块目录加载器
- * 用于从${module.lib}中加载所有的沙箱模块
+ * NOTE-LPK 模块目录加载器
+ *  用于从${module.lib}中加载所有的沙箱模块
  * Created by luanjia@taobao.com on 2016/11/17.
  */
 class ModuleLibLoader {
@@ -65,14 +65,22 @@ class ModuleLibLoader {
      *
      * @param mjCb 模块文件加载回调
      * @param mCb  模块加载回掉
+     *  NOTE-LPK 有三个地方调用了load,
+     *   在它们创建ModuleLibLoader对象是指定了要加载的目录，它们是
+     *   系统模块sandbox/bin/../module 下sandbox-mgr-module.jar 和
+     *   用户模块（DefaultCoreModuleManager.forceFlush）
+     *
      */
     void load(final ModuleJarLoadCallback mjCb,
               final ModuleJarLoader.ModuleLoadCallback mCb) {
 
         // 开始逐条加载
+        // NOTE-LPK: 2019/11/12 01:05 listModuleJarFileInLib lib/目录下所有jar
         for (final File moduleJarFile : listModuleJarFileInLib()) {
             try {
+                // NOTE-LPK: 2019/11/12 00:07 模块文件加载回调
                 mjCb.onLoad(moduleJarFile);
+                // NOTE-LPK: 2019/11/12 00:06 模块加载回调
                 new ModuleJarLoader(moduleJarFile, mode).load(mCb);
             } catch (Throwable cause) {
                 logger.warn("loading module-jar occur error! module-jar={};", moduleJarFile, cause);

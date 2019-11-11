@@ -44,7 +44,7 @@ public @interface Information {
     Mode[] mode() default {Mode.AGENT, Mode.ATTACH};
 
     /**
-     * 是否在加载时候就激活模块。
+     * NOTE-LPK 是否在加载时候就激活模块。
      *
      * @return 当值为TRUE时，模块加载完成后会主动激活模块；
      * 当值为FALSE时，模块加载完成后状态为冻结

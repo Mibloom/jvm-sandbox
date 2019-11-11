@@ -36,6 +36,12 @@ class ModuleJarLoader {
                                    final ModuleLoadCallback mCb) {
 
         final Set<String> loadedModuleUniqueIds = new LinkedHashSet<String>();
+        // NOTE-LPK: 2019/11/12 00:25
+        /**
+        * NOTE-LPK 2019/11/12 00:31 SPI 加载Module接口的实现
+         * 实际就是加载 ControlModule，InfoModule，ModuleMgrModule 这三个用于内部操作的类
+         * @see com.alibaba.jvm.sandbox.module.mgr
+        */
         final ServiceLoader<Module> moduleServiceLoader = ServiceLoader.load(Module.class, moduleClassLoader);
         final Iterator<Module> moduleIt = moduleServiceLoader.iterator();
         while (moduleIt.hasNext()) {
@@ -85,6 +91,7 @@ class ModuleJarLoader {
 
             try {
                 if (null != mCb) {
+                    // NOTE-LPK: 2019/11/12 00:34 调用模块这里加载回调的onLoad进行真正的加载用户模块
                     mCb.onLoad(uniqueId, classOfModule, module, moduleJarFile, moduleClassLoader);
                 }
             } catch (Throwable cause) {
@@ -117,14 +124,18 @@ class ModuleJarLoader {
         ModuleJarClassLoader moduleJarClassLoader = null;
         logger.info("prepare loading module-jar={};", moduleJarFile);
         try {
+            // NOTE-LPK: 2019/11/12 00:08 创建模块类加载器
             moduleJarClassLoader = new ModuleJarClassLoader(moduleJarFile);
-
+            // NOTE-LPK: 2019/11/12 00:12 获得但前线程类加载器，即当前沙箱类加载器
             final ClassLoader preTCL = Thread.currentThread().getContextClassLoader();
+            // NOTE-LPK: 2019/11/12 00:14 当前沙箱类加载器设置为模块类加载器
             Thread.currentThread().setContextClassLoader(moduleJarClassLoader);
 
             try {
+                // NOTE-LPK: 2019/11/12 00:15 加载模块loadingModules
                 hasModuleLoadedSuccessFlag = loadingModules(moduleJarClassLoader, mCb);
             } finally {
+                // NOTE-LPK: 2019/11/12 00:20 但前线程类加载器设置成沙箱类加载器
                 Thread.currentThread().setContextClassLoader(preTCL);
             }
 

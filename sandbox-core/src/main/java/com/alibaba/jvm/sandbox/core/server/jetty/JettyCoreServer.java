@@ -198,7 +198,7 @@ public class JettyCoreServer implements CoreServer {
                 }
             });
 
-            // 初始化加载所有的模块
+            // NOTE-LPK 初始化加载所有的模块
             try {
                 jvmSandbox.getCoreModuleManager().reset();
             } catch (Throwable cause) {
