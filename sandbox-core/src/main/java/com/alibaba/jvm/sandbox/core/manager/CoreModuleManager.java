@@ -6,7 +6,8 @@ import com.alibaba.jvm.sandbox.core.CoreModule;
 import java.util.Collection;
 
 /**
- * 模块管理
+ * NOTE-LPK 模块管理
+ *  操作沙箱命令的接口
  * Created by luanjia on 16/10/4.
  */
 public interface CoreModuleManager {

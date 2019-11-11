@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.Enumeration;
 
 /**
- * 可路由的URLClassLoader
+ * NOTE-LPK 可路由的URLClassLoader
  *
  * @author luanjia@taobao.com
  */
@@ -109,7 +109,7 @@ public class RoutingURLClassLoader extends URLClassLoader {
          * @param classLoader       目标ClassLoader
          * @param regexExpressArray 匹配规则表达式数组
          */
-        Routing(final ClassLoader classLoader, final String... regexExpressArray) {
+            Routing(final ClassLoader classLoader, final String... regexExpressArray) {
             if (ArrayUtils.isNotEmpty(regexExpressArray)) {
                 regexExpresses.addAll(Arrays.asList(regexExpressArray));
             }

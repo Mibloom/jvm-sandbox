@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * 服务提供库ClassLoader
+ * NOTE-LPK 服务提供库ClassLoader
  *
  * @author luanjia@taobao.com
  */

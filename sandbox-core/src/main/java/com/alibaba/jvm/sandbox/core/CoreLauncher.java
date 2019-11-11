@@ -55,9 +55,13 @@ public class CoreLauncher {
 
         VirtualMachine vmObj = null;
         try {
-
+            // NOTE-LPK: 2019/11/10 20:58 VirtualMachine.attach(PID) 会连接到 pid 对应的Java进程上
             vmObj = VirtualMachine.attach(targetJvmPid);
             if (vmObj != null) {
+                /**
+                * NOTE-LPK 2019/11/10 21:02  loadAgent方法会将 agentJarPath的jar包注入对应的进程，然后调用agentmain方法
+                 * @see com.alibaba.jvm.sandbox.agent.AgentLauncher
+                */
                 vmObj.loadAgent(agentJarPath, cfg);
             }
 

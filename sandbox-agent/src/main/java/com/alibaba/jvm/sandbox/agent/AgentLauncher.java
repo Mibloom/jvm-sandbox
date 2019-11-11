@@ -100,6 +100,9 @@ public class AgentLauncher {
      * @param featureString 启动参数
      *                      [namespace,token,ip,port,prop]
      * @param inst          inst
+     *
+     * NOTE-LPK Inst 是一个 java.lang.instrument.Instrumentation 的实例，由 JVM 自动传入。
+     *  java.lang.instrument.Instrumentation 是 instrument 包中定义的一个接口，也是这个包的核心部分，集中了其中几乎所有的功能方法，例如类定义的转换和操作等等。
      */
     public static void agentmain(String featureString, Instrumentation inst) {
         LAUNCH_MODE = LAUNCH_MODE_ATTACH;
@@ -216,7 +219,7 @@ public class AgentLauncher {
 
         try {
             final String home = getSandboxHome(featureMap);
-            // 将Spy注入到BootstrapClassLoader
+            // NOTE-LPK 将Spy注入到BootstrapClassLoader
             inst.appendToBootstrapClassLoaderSearch(new JarFile(new File(
                     getSandboxSpyJarPath(home)
                     // SANDBOX_SPY_JAR_PATH
@@ -229,7 +232,11 @@ public class AgentLauncher {
                     // SANDBOX_CORE_JAR_PATH
             );
 
-            // CoreConfigure类定义
+            // NOTE-LPK CoreConfigure类定义(内核启动配置)
+            /**
+            * NOTE-LPK 2019/11/10 23:50
+             * @see com.alibaba.jvm.sandbox.core.CoreConfigure
+            */
             final Class<?> classOfConfigure = sandboxClassLoader.loadClass(CLASS_OF_CORE_CONFIGURE);
 
             // 反序列化成CoreConfigure类实例
@@ -240,6 +247,12 @@ public class AgentLauncher {
             final Class<?> classOfProxyServer = sandboxClassLoader.loadClass(CLASS_OF_PROXY_CORE_SERVER);
 
             // 获取CoreServer单例
+            /**
+            * NOTE-LPK 2019/11/10 23:37  在 ProxyCoreServer 中 getInstance 方法 会返回 JettyCoreServer 实例，
+             * 其实这里就是初始化了一个 JettyCoreServer 实例 objectOfProxyServer
+             * @see com.alibaba.jvm.sandbox.core.server.ProxyCoreServer
+             * @see com.alibaba.jvm.sandbox.core.server.jetty.JettyCoreServer
+            */
             final Object objectOfProxyServer = classOfProxyServer
                     .getMethod("getInstance")
                     .invoke(null);
@@ -249,6 +262,10 @@ public class AgentLauncher {
 
 
             // 如果未绑定,则需要绑定一个地址
+            /**
+            * NOTE-LPK 2019/11/11 17:10  在绑定过程中初始化logback日志框架
+             * @see com.alibaba.jvm.sandbox.core.server.jetty.JettyCoreServer
+            */
             if (!isBind) {
                 try {
                     classOfProxyServer

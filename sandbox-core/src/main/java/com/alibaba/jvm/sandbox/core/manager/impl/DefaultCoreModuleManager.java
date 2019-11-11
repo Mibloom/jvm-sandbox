@@ -30,7 +30,7 @@ import static com.alibaba.jvm.sandbox.core.manager.impl.DefaultCoreModuleManager
 import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
 
 /**
- * 默认的模块管理实现
+ * NOTE-LPK 默认的沙箱模块管理实现类
  * Created by luanjia on 16/10/4.
  */
 public class DefaultCoreModuleManager implements CoreModuleManager {
@@ -49,7 +49,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
     private final Map<String, CoreModule> loadedModuleBOMap = new ConcurrentHashMap<String, CoreModule>();
 
     /**
-     * 模块模块管理
+     * NOTE-LPK 模块模块管理
      *
      * @param cfg             模块核心配置
      * @param inst            inst
@@ -65,7 +65,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
         this.classDataSource = classDataSource;
         this.providerManager = providerManager;
 
-        // 初始化模块目录
+        // NOTE-LPK 初始化模块目录
         this.moduleLibDirArray = mergeFileArray(
                 new File[]{new File(cfg.getSystemModuleLibPath())},
                 cfg.getUserModuleLibFilesWithCache()

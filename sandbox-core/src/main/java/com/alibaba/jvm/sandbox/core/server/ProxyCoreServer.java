@@ -12,6 +12,7 @@ public class ProxyCoreServer implements CoreServer {
     private final static Class<? extends CoreServer> classOfCoreServerImpl
             = JettyCoreServer.class;
 
+    // NOTE-LPK: 2019/11/10 23:47  proxy 被初始化为 JettyCoreServer实例
     private final CoreServer proxy;
 
     private ProxyCoreServer(CoreServer proxy) {

@@ -53,6 +53,7 @@ public class DefaultProviderManager implements ProviderManager {
         for (final File providerJarFile : FileUtils.listFiles(providerLibDir, new String[]{"jar"}, false)) {
 
             try {
+                // NOTE-LPK: 2019/11/11 22:27 创建了一个针对服务提供库sandbox-mgr-provider.jar的ClassLoader
                 final ProviderClassLoader providerClassLoader = new ProviderClassLoader(providerJarFile, getClass().getClassLoader());
 
                 // load ModuleJarLoadingChain
@@ -76,6 +77,7 @@ public class DefaultProviderManager implements ProviderManager {
                             final Class<T> clazz,
                             final ClassLoader providerClassLoader,
                             final File providerJarFile) throws IllegalAccessException {
+        // NOTE-LPK: 2019/11/11 22:28 ServiceLoader.load JKD SPI 加载
         final ServiceLoader<T> serviceLoader = ServiceLoader.load(clazz, providerClassLoader);
         for (final T provider : serviceLoader) {
             injectResource(provider);

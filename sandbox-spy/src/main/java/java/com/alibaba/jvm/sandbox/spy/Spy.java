@@ -7,6 +7,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * NOTE-LPK Spy 中每个方法都是沙箱以后进行AOP流程的动作, 沙箱启动时Spy会被加入BootstrapClassLoader加载路径里，作为一个基本类使用
+ *
  * 间谍类，藏匿在各个ClassLoader中
  * <p>
  * 从{@code 0.0.0.v}版本之后,因为要考虑能在alipay的CloudEngine环境中使用,这个环境只能向上查找java.开头的包路径.
@@ -29,7 +31,6 @@ public class Spy {
     public static volatile boolean isSpyThrowException = false;
 
     private static final Class<Spy.Ret> SPY_RET_CLASS = Spy.Ret.class;
-
     private static final Map<String, MethodHook> namespaceMethodHookMap
             = new ConcurrentHashMap<String, MethodHook>();
 
@@ -97,6 +98,7 @@ public class Spy {
     private static final AtomicInteger sequenceRef = new AtomicInteger(1000);
 
     /**
+     * NOTE-LPK 一个类会被植入多个环境的Spy, 以此来做到环境隔离
      * 生成全局唯一序列，
      * 在JVM-SANDBOX中允许多个命名空间的存在，不同的命名空间下listenerId/objectId将会被植入到同一份字节码中，
      * 此时需要用全局的ID生成策略规避不同的命名空间
@@ -308,8 +310,8 @@ public class Spy {
 
     /**
      * 本地线程
-     * NOTE-LPK  双向链表
-     * NOTE-LPK 链表每一个节点都是一个线程和一个锁，SelfCallBarrier 一共有512条这样的链表， 通过线程的哈希值确定所属的链表
+     * NOTE-LPK  SelfCallBarrier 是一个 双向链表
+     * NOTE-LPK 链表每一个节点都是一个线程和一个锁构成的对象Node，SelfCallBarrier 一共有512条这样的链表， 通过线程的哈希值确定所属的链表
      */
     public static class SelfCallBarrier {
 

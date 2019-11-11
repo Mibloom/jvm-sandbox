@@ -158,7 +158,7 @@ public class CoreConfigure {
     }
 
     /**
-     * 获取用户模块加载文件/目录(集合)
+     * NOTE-LPK 获取用户模块加载文件/目录(集合)
      *
      * @return 用户模块加载文件/目录(集合)
      */

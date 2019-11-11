@@ -56,6 +56,7 @@ public class JettyCoreServer implements CoreServer {
         return coreServer;
     }
 
+    @Override
     public boolean isBind() {
         return initializer.isInitialized();
     }
@@ -81,7 +82,8 @@ public class JettyCoreServer implements CoreServer {
 
             // destroy http server
             logger.info("{} is destroying", this);
-            while (!httpServer.isStopped());
+            while (!httpServer.isStopped()) {
+            }
             httpServer.destroy();
 
         } catch (Throwable cause) {
@@ -118,8 +120,8 @@ public class JettyCoreServer implements CoreServer {
         );
     }
 
-    /*
-     * 初始化Jetty's ContextHandler
+    /**
+     * NOTE-LPK 初始化Jetty's ContextHandler
      */
     private void initJettyContextHandler() {
         final String namespace = cfg.getNamespace();
@@ -148,6 +150,7 @@ public class JettyCoreServer implements CoreServer {
 
         httpServer.setHandler(context);
     }
+
 
     private void initHttpServer() {
 
@@ -180,14 +183,17 @@ public class JettyCoreServer implements CoreServer {
             initializer.initProcess(new Initializer.Processor() {
                 @Override
                 public void process() throws Throwable {
+                    // NOTE-LPK: 2019/11/10 23:49 初始化logback日志框架
                     LogbackUtils.init(
                             cfg.getNamespace(),
                             cfg.getCfgLibPath() + File.separator + "sandbox-logback.xml"
                     );
                     logger.info("initializing server. cfg={}", cfg);
+                    // NOTE-LPK: 2019/11/11 17:31 创建一个沙箱
                     jvmSandbox = new JvmSandbox(cfg, inst);
                     initHttpServer();
                     initJettyContextHandler();
+                    // NOTE-LPK: 2019/11/11 23:25 启动jetty服务
                     httpServer.start();
                 }
             });
