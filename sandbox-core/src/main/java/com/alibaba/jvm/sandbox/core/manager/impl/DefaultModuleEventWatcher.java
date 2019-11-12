@@ -116,6 +116,11 @@ public class DefaultModuleEventWatcher implements ModuleEventWatcher {
                         );
                     }
                 }
+                // NOTE-LPK: 2019/11/12 23:17 重要步骤 转换待转换的类
+                /**
+                * NOTE-LPK 2019/11/12 23:18 之后会调用到SandboxClassFileTransformer的transform方法
+                 * @See com.alibaba.jvm.sandbox.core.manager.impl.SandboxClassFileTransformer
+                */
                 inst.retransformClasses(waitingReTransformClass);
                 logger.info("watch={} in module={} single reTransform {} success, at index={};total={};",
                         watchId, coreModule.getUniqueId(), waitingReTransformClass,
@@ -172,11 +177,12 @@ public class DefaultModuleEventWatcher implements ModuleEventWatcher {
                       final Progress progress,
                       final Event.Type... eventType) {
         final int watchId = watchIdSequencer.next();
-        // 给对应的模块追加ClassFileTransformer
+        // NOTE-LPK 给对应的模块追加ClassFileTransformer
         final SandboxClassFileTransformer sandClassFileTransformer = new SandboxClassFileTransformer(
                 watchId, coreModule.getUniqueId(), matcher, listener, isEnableUnsafe, eventType, namespace);
 
         // 注册到CoreModule中
+        // NOTE-LPK: 2019/11/12 23:03 这个coreModule 就是我们自己定义的BrokenClockTinkerModule
         coreModule.getSandboxClassFileTransformers().add(sandClassFileTransformer);
 
         // 注册到JVM加载上ClassFileTransformer处理新增的类
@@ -196,7 +202,7 @@ public class DefaultModuleEventWatcher implements ModuleEventWatcher {
         beginProgress(progress, waitingReTransformClasses.size());
         try {
 
-            // 应用JVM
+            // NOTE-LPK 应用JVM
             reTransformClasses(watchId, waitingReTransformClasses, progress);
 
             // 计数

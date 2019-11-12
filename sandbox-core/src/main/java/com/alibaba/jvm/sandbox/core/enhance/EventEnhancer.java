@@ -93,11 +93,17 @@ public class EventEnhancer implements Enhancer {
                                   final String namespace,
                                   final int listenerId,
                                   final Event.Type[] eventTypeArray) {
-        // 返回增强后字节码
+
+        // NOTE-LPK: 2019/11/12 23:32 ASM 进行修改字节码
+        // NOTE-LPK: 2019/11/13 00:54 ClassReader读取字节码数据(ASM中元素（被访问者))
         final ClassReader cr = new ClassReader(byteCodeArray);
+        // NOTE-LPK: 2019/11/13 00:55 ClassWriter负责将对象化的 class 文件内容重构成一个二进制格式的 class 字节码文件
+        //  ClassWriter继承ClassVisitor（访问者）
         final ClassWriter cw = createClassWriter(targetClassLoader, cr);
         final int targetClassLoaderObjectID = ObjectIDs.instance.identity(targetClassLoader);
+        // NOTE-LPK: 2019/11/13 01:03 accept 方法接受一个ClassVisitor实例，该实例重载visitMethod，即表示对该原字节码某个方法进行改造
         cr.accept(
+                // NOTE-LPK: 2019/11/13 00:57 EventWeaver extends ClassVisitor，EventWeaver也是访问者
                 new EventWeaver(
                         ASM7, cw, namespace, listenerId,
                         targetClassLoaderObjectID,

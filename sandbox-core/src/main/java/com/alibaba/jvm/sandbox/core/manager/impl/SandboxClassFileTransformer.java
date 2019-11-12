@@ -64,6 +64,10 @@ public class SandboxClassFileTransformer implements ClassFileTransformer {
                 : createClassStructure(classBeingRedefined);
     }
 
+    /**
+    * NOTE-LPK 2019/11/12 23:21 JVM会调用这个方法获取字节码，这个方法中可以替换字节码，实现增强
+     * 这里还多了一个过滤sandBox自身类的操作
+    */
     @Override
     public byte[] transform(final ClassLoader loader,
                             final String internalClassName,
@@ -132,6 +136,7 @@ public class SandboxClassFileTransformer implements ClassFileTransformer {
 
         // 开始进行类匹配
         try {
+            // NOTE-LPK: 2019/11/12 23:25 类增强
             final byte[] toByteCodeArray = new EventEnhancer().toByteCodeArray(
                     loader,
                     srcByteCodeArray,

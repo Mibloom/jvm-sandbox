@@ -143,6 +143,7 @@ public class JettyCoreServer implements CoreServer {
         // module-http-servlet
         final String pathSpec = "/module/http/*";
         logger.info("initializing http-handler. path={}", contextPath + pathSpec);
+        // NOTE-LPK: 2019/11/12 16:41将处理http请求的模块加入jetty上下文
         context.addServlet(
                 new ServletHolder(new ModuleHttpServlet(cfg, jvmSandbox.getCoreModuleManager())),
                 pathSpec

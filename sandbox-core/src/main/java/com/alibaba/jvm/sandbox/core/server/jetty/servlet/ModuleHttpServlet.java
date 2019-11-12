@@ -29,7 +29,7 @@ import java.util.Map;
 import static com.alibaba.jvm.sandbox.api.util.GaStringUtils.matching;
 
 /**
- * 用于处理模块的HTTP请求
+ * NOTE-LPK 用于处理模块的HTTP请求
  *
  * @author luanjia@taobao.com
  */
@@ -65,7 +65,7 @@ public class ModuleHttpServlet extends HttpServlet {
         // 获取请求路径
         final String path = req.getPathInfo();
 
-        // 获取模块ID
+        // NOTE-LPK 获取模块ID
         final String uniqueId = parseUniqueId(path);
         if (StringUtils.isBlank(uniqueId)) {
             logger.warn("http request value={} was not found.", path);
@@ -73,7 +73,7 @@ public class ModuleHttpServlet extends HttpServlet {
             return;
         }
 
-        // 获取模块
+        // NOTE-LPK 获取模块 uniqueId 就是注解Information的id
         final CoreModule coreModule = coreModuleManager.get(uniqueId);
         if (null == coreModule) {
             logger.warn("module[id={}] was not existed, value={};", uniqueId, path);
@@ -105,7 +105,7 @@ public class ModuleHttpServlet extends HttpServlet {
             );
         }
 
-        // 生成方法调用参数
+        // NOTE-LPK 生成方法调用参数
         final Object[] parameterObjectArray = generateParameterObjectArray(method, req, resp);
 
         final PrintWriter writer = coreModule.append(new ReleaseResource<PrintWriter>(resp.getWriter()) {
@@ -122,7 +122,12 @@ public class ModuleHttpServlet extends HttpServlet {
         final ClassLoader oriThreadContextClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             method.setAccessible(true);
+            // NOTE-LPK: 2019/11/12 18:07 将但前线程的类加载器设置成模块的类加载器ModuleJarClassLoader
             Thread.currentThread().setContextClassLoader(coreModule.getLoader());
+            /**
+            * NOTE-LPK 2019/11/12 18:36 invoke 时进入我们自定义模块
+             * @See com.alibaba.jvm.sandbox.module.debug.BrokenClockTinkerModule
+            */
             method.invoke(coreModule.getModule(), parameterObjectArray);
             logger.debug("http request value={} invoke module[id={};] {}#{} success.",
                     path, uniqueId, coreModule.getModule().getClass().getName(), method.getName());

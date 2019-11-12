@@ -56,6 +56,7 @@ class AsmTryCatchBlock {
 /**
  * 方法事件编织者
  * Created by luanjia@taobao.com on 16/7/16.
+ * NOTE-LPK 使用ASM进行增强字节码
  */
 public class EventWeaver extends ClassVisitor implements Opcodes, AsmTypes, AsmMethods {
 

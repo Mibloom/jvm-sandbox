@@ -765,7 +765,9 @@ public class EventWatchBuilder {
                                final Progress progress,
                                final Event.Type... eventTypes) {
 
+        // NOTE-LPK: 2019/11/12 22:51 调用moduleEventWatcher.watch去增强目标类的字节码
         final int watchId = moduleEventWatcher.watch(
+                // NOTE-LPK: 2019/11/12 22:54 创建事件观察条件，过滤类和方法
                 toEventWatchCondition(),
                 listener,
                 progress,
