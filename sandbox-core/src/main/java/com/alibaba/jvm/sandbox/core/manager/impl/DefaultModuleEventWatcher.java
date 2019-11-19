@@ -241,7 +241,7 @@ public class DefaultModuleEventWatcher implements ModuleEventWatcher {
                 EventListenerHandlers.getSingleton()
                         .frozen(sandboxClassFileTransformer.getListenerId());
 
-                // 在JVM中移除掉命中的ClassFileTransformer
+                // NOTE-LPK 在JVM中移除掉命中的ClassFileTransformer
                 inst.removeTransformer(sandboxClassFileTransformer);
 
                 // 计数

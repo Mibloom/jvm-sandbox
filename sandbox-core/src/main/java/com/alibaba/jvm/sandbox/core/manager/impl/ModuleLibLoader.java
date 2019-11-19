@@ -65,11 +65,8 @@ class ModuleLibLoader {
      *
      * @param mjCb 模块文件加载回调
      * @param mCb  模块加载回掉
-     *  NOTE-LPK 有三个地方调用了load,
-     *   在它们创建ModuleLibLoader对象是指定了要加载的目录，它们是
-     *   系统模块sandbox/bin/../module 下sandbox-mgr-module.jar 和
-     *   用户模块（DefaultCoreModuleManager.forceFlush）
-     *
+     *  NOTE-LPK 有三个地方调用了load。
+     *   在它们创建ModuleLibLoader对象是指定了要加载的目录，它们是  系统模块sandbox/bin/../module 下sandbox-mgr-module.jar 和 用户模块（DefaultCoreModuleManager.forceFlush）
      */
     void load(final ModuleJarLoadCallback mjCb,
               final ModuleJarLoader.ModuleLoadCallback mCb) {

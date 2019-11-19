@@ -224,6 +224,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
                             if (null != moduleEventWatcher) {
                                 for (final SandboxClassFileTransformer sandboxClassFileTransformer
                                         : new ArrayList<SandboxClassFileTransformer>(coreModule.getSandboxClassFileTransformers())) {
+                                    // NOTE-LPK: 2019/11/14 23:29 从jvm去掉我们之前带有增强的代码逻辑的字节码，然后再重新渲染一次原始类的字节码。
                                     moduleEventWatcher.delete(sandboxClassFileTransformer.getWatchId());
                                 }
                             }

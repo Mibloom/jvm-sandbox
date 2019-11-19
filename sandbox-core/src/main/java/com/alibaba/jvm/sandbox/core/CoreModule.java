@@ -250,6 +250,7 @@ public class CoreModule {
             if (null != resourceRef) {
                 logger.debug("release resource={} in module={}", resourceRef.get(), uniqueId);
                 try {
+                    // NOTE-LPK: 2019/11/14 23:25
                     resourceRef.release();
                 } catch (Exception cause) {
                     logger.warn("release resource occur error in module={};", uniqueId, cause);
