@@ -49,7 +49,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
     private final Map<String, CoreModule> loadedModuleBOMap = new ConcurrentHashMap<String, CoreModule>();
 
     /**
-     * NOTE-LPK 模块模块管理
+     * NOTE-LPK 默认模块管理
      *
      * @param cfg             模块核心配置
      * @param inst            inst
@@ -65,7 +65,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
         this.classDataSource = classDataSource;
         this.providerManager = providerManager;
 
-        // NOTE-LPK 初始化模块目录
+        // NOTE-LPK 初始化模块目录，系统模块和用户模块
         this.moduleLibDirArray = mergeFileArray(
                 new File[]{new File(cfg.getSystemModuleLibPath())},
                 cfg.getUserModuleLibFilesWithCache()
@@ -585,7 +585,7 @@ public class DefaultCoreModuleManager implements CoreModuleManager {
         // 1. 强制卸载所有模块
         unloadAll();
 
-        // 2. NOTE-LPK 加载所有模块
+        // 2. NOTE-LPK 加载所有模块 moduleLibDirArray 是系统模块路径和用户模块路径
         for (final File moduleLibDir : moduleLibDirArray) {
             // 用户模块加载目录，加载用户模块目录下的所有模块
             // 对模块访问权限进行校验

@@ -11,16 +11,6 @@ import static com.alibaba.jvm.sandbox.core.util.SandboxStringUtils.getCauseMessa
  */
 public class CoreLauncher {
 
-
-    public CoreLauncher(final String targetJvmPid,
-                        final String agentJarPath,
-                        final String token) throws Exception {
-
-        // 加载agent
-        attachAgent(targetJvmPid, agentJarPath, token);
-
-    }
-
     /**
      * 内核启动程序
      *
@@ -48,6 +38,14 @@ public class CoreLauncher {
         }
     }
 
+    public CoreLauncher(final String targetJvmPid,
+                        final String agentJarPath,
+                        final String token) throws Exception {
+
+        // 加载agent
+        attachAgent(targetJvmPid, agentJarPath, token);
+
+    }
     // 加载Agent
     private void attachAgent(final String targetJvmPid,
                              final String agentJarPath,
@@ -59,7 +57,7 @@ public class CoreLauncher {
             vmObj = VirtualMachine.attach(targetJvmPid);
             if (vmObj != null) {
                 /**
-                * NOTE-LPK 2019/11/10 21:02  loadAgent方法会将 agentJarPath的jar包注入对应的进程，然后调用agentmain方法
+                * NOTE-LPK 2019/11/10 21:02  loadAgent方法会将 agentJarPath的jar包注入对应的进程，并加载然后调用agentmain方法
                  * @see com.alibaba.jvm.sandbox.agent.AgentLauncher
                 */
                 vmObj.loadAgent(agentJarPath, cfg);

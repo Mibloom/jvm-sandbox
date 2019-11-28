@@ -98,7 +98,8 @@ public class Spy {
     private static final AtomicInteger sequenceRef = new AtomicInteger(1000);
 
     /**
-     * NOTE-LPK 一个类会被植入多个环境的Spy, 以此来做到环境隔离
+     * NOTE-LPK 一个类会被植入一个Spy, 根据ModuleJarClassLoader以此来做到模块和模块隔离，
+     *  根据namespace和listenerId/objectId（也就是SandboxClassLoader）做到多租户隔离
      * 生成全局唯一序列，
      * 在JVM-SANDBOX中允许多个命名空间的存在，不同的命名空间下listenerId/objectId将会被植入到同一份字节码中，
      * 此时需要用全局的ID生成策略规避不同的命名空间

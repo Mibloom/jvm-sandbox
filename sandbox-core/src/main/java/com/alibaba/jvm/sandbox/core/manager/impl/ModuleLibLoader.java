@@ -66,7 +66,7 @@ class ModuleLibLoader {
      * @param mjCb 模块文件加载回调
      * @param mCb  模块加载回掉
      *  NOTE-LPK 有三个地方调用了load。
-     *   在它们创建ModuleLibLoader对象是指定了要加载的目录，它们是  系统模块sandbox/bin/../module 下sandbox-mgr-module.jar 和 用户模块（DefaultCoreModuleManager.forceFlush）
+     *   在它们创建ModuleLibLoader对象时指定了要加载的目录，它们是  系统模块sandbox/bin/../module 下sandbox-mgr-module.jar 和 用户模块（DefaultCoreModuleManager.forceFlush）
      */
     void load(final ModuleJarLoadCallback mjCb,
               final ModuleJarLoader.ModuleLoadCallback mCb) {
@@ -75,9 +75,9 @@ class ModuleLibLoader {
         // NOTE-LPK: 2019/11/12 01:05 listModuleJarFileInLib lib/目录下所有jar
         for (final File moduleJarFile : listModuleJarFileInLib()) {
             try {
-                // NOTE-LPK: 2019/11/12 00:07 模块文件加载回调
+                // NOTE-LPK: 2019/11/12 00:07 用户模块文件加载回调, 目前文件加载链中没有具体实现，所以没什么作用
                 mjCb.onLoad(moduleJarFile);
-                // NOTE-LPK: 2019/11/12 00:06 模块加载回调
+                // NOTE-LPK: 2019/11/12 00:06 用户模块加载回调，为每一个模块创建一个ModuleJarLoader对象，这也是为了模块隔离
                 new ModuleJarLoader(moduleJarFile, mode).load(mCb);
             } catch (Throwable cause) {
                 logger.warn("loading module-jar occur error! module-jar={};", moduleJarFile, cause);

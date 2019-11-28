@@ -36,6 +36,7 @@ public class DefaultProviderManager implements ProviderManager {
     public DefaultProviderManager(final CoreConfigure cfg) {
         this.cfg = cfg;
         try {
+            // NOTE-LPK: 2019/11/26 19:18 初始化，创建加载链
             init(cfg);
         } catch (Throwable cause) {
             logger.warn("loading sandbox's provider-lib[{}] failed.", cfg.getProviderLibPath(), cause);
@@ -56,10 +57,10 @@ public class DefaultProviderManager implements ProviderManager {
                 // NOTE-LPK: 2019/11/11 22:27 创建了一个针对服务提供库sandbox-mgr-provider.jar的ClassLoader
                 final ProviderClassLoader providerClassLoader = new ProviderClassLoader(providerJarFile, getClass().getClassLoader());
 
-                // load ModuleJarLoadingChain
+                // NOTE-LPK load ModuleJarLoadingChain
                 inject(moduleJarLoadingChains, ModuleJarLoadingChain.class, providerClassLoader, providerJarFile);
 
-                // load ModuleLoadingChain
+                // NOTE-LPK load ModuleLoadingChain
                 inject(moduleLoadingChains, ModuleLoadingChain.class, providerClassLoader, providerJarFile);
 
                 logger.info("loading provider-jar[{}] was success.", providerJarFile);

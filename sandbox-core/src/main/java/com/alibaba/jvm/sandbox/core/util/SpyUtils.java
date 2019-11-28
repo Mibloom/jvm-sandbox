@@ -15,7 +15,7 @@ public class SpyUtils {
 
 
     /**
-     * 初始化Spy类
+     * NOTE-LPK 初始化Spy类
      *
      * @param namespace 命名空间
      */
