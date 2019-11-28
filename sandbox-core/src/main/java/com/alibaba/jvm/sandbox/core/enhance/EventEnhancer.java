@@ -55,7 +55,7 @@ public class EventEnhancer implements Enhancer {
         };
     }
 
-    private static final boolean isDumpClass = false;
+    private static final boolean isDumpClass = true;
 
     /*
      * dump class to file
